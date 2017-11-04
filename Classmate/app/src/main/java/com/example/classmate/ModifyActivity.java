@@ -2,6 +2,7 @@ package com.example.classmate;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -25,12 +26,16 @@ public class ModifyActivity extends AppCompatActivity implements View.OnClickLis
     LinearLayout modifyName, modifyAddress, modifyPhone, modifyWechat, modifyEmail, modifyQQ, modifyMessage;
     Button buttonConfirm, buttonCancel;
     Person person;
+    SQLiteDatabase db;
+
+    Sqlmethods sqlmethods = new Sqlmethods();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modify);
         person = (Person) getIntent().getSerializableExtra(MainActivity.SER_KEY);
+        db = new MysqlCreate(this, "Classmate.db", null, 1).getWritableDatabase();
         initView();
     }
 
@@ -155,6 +160,16 @@ public class ModifyActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     public void writeDateToDatabase() {
-
+        sqlmethods.Alter(
+                db,
+                this.person.id,
+                dialogTextName.getText().toString(),
+                dialogTextAddress.getText().toString(),
+                dialogTextPhone.getText().toString(),
+                dialogTextWechat.getText().toString(),
+                dialogTextEmail.getText().toString(),
+                dialogTextQQ.getText().toString(),
+                dialogTextMessage.getText().toString()
+        );
     }
 }

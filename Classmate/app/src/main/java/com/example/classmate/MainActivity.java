@@ -1,7 +1,10 @@
 package com.example.classmate;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -54,6 +57,10 @@ public class MainActivity extends AppCompatActivity {
 
     TextView dialogTextName, dialogTextAddress,dialogTextPhone,dialogTextWechat,dialogTextEmail,dialogTextQQ,dialogTextMessage;
 
+    MysqlCreate dbHelper;
+    SQLiteDatabase db;
+    Sqlmethods sqlmethods = new Sqlmethods();
+
     public final static String SER_KEY = "com.tutor.objecttran.ser";
 
     @Override
@@ -61,13 +68,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initDatabase();
-         initData();
+        // initData();
         initView();
         setDialogAdd();
     }
 
     public void initDatabase() {
-
+        dbHelper = new MysqlCreate(this, "Classmate.db", null, 1);
+        db = dbHelper.getWritableDatabase();
     }
 
     @Override
@@ -76,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
             case REQUEST_MODIFY:
                 if (resultCode == RESULT_OK) {
                     Person person = (Person) data.getSerializableExtra(MainActivity.SER_KEY);
+
                 }
                 break;
         }
@@ -96,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
     public void loadData(){
         //persons.clear();
 
+        persons = sqlmethods.initList(db, persons);
+        System.out.println("============" + persons.size());
 
         setMyAdapter();
 
@@ -109,7 +120,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void gotoModify(Person person){
-
+        Intent intent = new Intent(MainActivity.this, ModifyActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(SER_KEY, person);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        //startActivityForResult(intent, REQUEST_MODIFY);
     }
 
     public void delete(final int position){
@@ -123,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
                         myAdapter.notifyItemRemoved(position);
                         myAdapter.notifyItemRangeRemoved(position, myAdapter.getItemCount() - 1);
 
+                        sqlmethods.Delete(db, persons.get(position).id);
                     }
                 })
                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -277,6 +294,8 @@ public class MainActivity extends AppCompatActivity {
         myAdapter.notifyItemInserted(persons.size());
         myAdapter.notifyDataSetChanged();
 
+        sqlmethods.Insert(db, person);
+
     }
 
     public Boolean enableToAddItem(){
@@ -330,7 +349,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void saveToExcel(){
-        Toast.makeText(this, "saveToExcel", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "loaing...", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -442,6 +461,7 @@ public class MainActivity extends AppCompatActivity {
             String text = ""+ i;
 //            Person person = new Person(i, text, text,text,text,text,text,text);
             persons.add(new Person(i, text, text,text,text,text,text,text));
+            sqlmethods.Insert(db, persons.get(i));
         }
     }
 }
