@@ -61,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
     SQLiteDatabase db;
     Sqlmethods sqlmethods = new Sqlmethods();
 
+    CreateExcel createExcel = new CreateExcel();
+
     public final static String SER_KEY = "com.tutor.objecttran.ser";
 
     @Override
@@ -349,8 +351,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void saveToExcel(){
-        Toast.makeText(this, "loaing...", Toast.LENGTH_SHORT).show();
-
+        Toast.makeText(this, "loading...", Toast.LENGTH_SHORT).show();
+        createExcel.CreateExcel();
     }
 
     public void setListener() {
