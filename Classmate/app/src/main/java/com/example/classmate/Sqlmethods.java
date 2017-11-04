@@ -65,7 +65,7 @@ public class Sqlmethods implements ISqlmethods {
                 String id = cursor.getString(cursor.getColumnIndex("id"));
                 String describe = cursor.getString(cursor.getColumnIndex("describe"));
                 String email = cursor.getString(cursor.getColumnIndex("email"));
-                System.out.println("================= db " + email);
+//                System.out.println("================= db " + email);
                 int Intid = Integer.parseInt(id);
                 Person person = new Person(
                         Intid,

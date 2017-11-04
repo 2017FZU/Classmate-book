@@ -61,7 +61,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         holder.phone.setText(persons.get(position).phone);
         holder.wechat.setText(persons.get(position).wechat);
         holder.email.setText(persons.get(position).email);
-        System.out.println("================" + persons.get(position).email);
+//        System.out.println("================" + persons.get(position).email);
         holder.qq.setText(persons.get(position).qq);
         holder.message.setText(persons.get(position).message);
     }

@@ -1,10 +1,15 @@
 package com.example.classmate;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -61,7 +66,15 @@ public class MainActivity extends AppCompatActivity {
     SQLiteDatabase db;
     Sqlmethods sqlmethods = new Sqlmethods();
 
+    CreateExcel createExcel = new CreateExcel(this);
+
     public final static String SER_KEY = "com.tutor.objecttran.ser";
+
+    private static final int REQUEST_EXTERNAL_STORAGE = 1112;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,10 +116,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadData(){
-        //persons.clear();
-
+        persons.clear();
         persons = sqlmethods.initList(db, persons);
-        System.out.println("============" + persons.size());
+//        System.out.println("============" + persons.size());
 
         setMyAdapter();
 
@@ -348,10 +360,50 @@ public class MainActivity extends AppCompatActivity {
         startActivity(Intent.createChooser(intent,"请选择邮件类应用"));
     }
 
-    public void saveToExcel(){
-        Toast.makeText(this, "loaing...", Toast.LENGTH_SHORT).show();
-
+    public void saveToExcel() {
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
+        } else {
+            goToSaveExcel();
+        }
     }
+
+    public void goToSaveExcel(){
+//        Toast.makeText(this, "loading...", Toast.LENGTH_SHORT).show();
+        createExcel.createExcel(persons);
+//        createExcel.updatExcel(persons);
+//        for (int i = 0; i < persons.size(); i++) {
+//            Person person = persons.get(i);
+//            createExcel.updatExcel(
+//                    person.name,
+//                    person.address,
+//                    person.phone,
+//                    person.wechat,
+//                    person.email,
+//                    person.qq,
+//                    person.message,
+//                    i
+//            );
+//        }
+        Toast.makeText(this, "您的文件已保存至 " + createExcel.LOCAL_EXCEL, Toast.LENGTH_SHORT).show();
+//        createExcel.saveExcelToLocal();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_EXTERNAL_STORAGE:
+                if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    goToSaveExcel();
+                } else {
+                    Toast.makeText(MainActivity.this, "请开启文件存储权限", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
+
 
     public void setListener() {
 
