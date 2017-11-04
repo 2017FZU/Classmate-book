@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Classmate</string>
+    <string name="name">"姓名"</string>
+    <string name="address">"家庭地址"</string>
+    <string name="phone">"电话"</string>
+    <string name="wechat">"微信"</string>
+    <string name="email">"邮箱"</string>
+    <string name="qq">"QQ"</string>
+    <string name="message">"个性语言"</string>
+</resources>
